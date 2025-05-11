@@ -1,6 +1,6 @@
 import "./pages/index.css";
 import { initialCards } from "./components/cards.js";
-import { createCard, deleteCard } from "./components/card.js";
+import { createCard, onDeleteCard, onLikeCard } from "./components/card.js";
 import {
   openModal,
   closeModal,
@@ -30,29 +30,19 @@ const formCreateCard = document.forms["new-place"];
 const cardNameInput = formCreateCard.elements["place-name"];
 const cardUrlInput = formCreateCard.elements.link;
 
-//DOM узлы для отображения картинки в попап
+//DOM узел для отображения картинки в попап
 const imageInPopupImage = popupImage.querySelector(".popup__image");
 
 //функция заполнения попапа картинки данными
-const openImage = (event) => {
-  const image = event.target;
-  const card = image.closest(".card");
-  const title = card.querySelector(".card__title").textContent;
-
-  //заполняем popupImage данными из карточки
-  imageInPopupImage.src = image.src;
-  imageInPopupImage.alt = image.alt;
-  popupImage.querySelector(".popup__caption").textContent = title;
+const onOpenPreview = (cardInfo) => {
+  imageInPopupImage.src = cardInfo.link;
+  imageInPopupImage.alt = cardInfo.name;
+  popupImage.querySelector(".popup__caption").textContent = cardInfo.name;
   openModal(popupImage);
 };
 
-const clickLike = (event) => {
-  const like = event.target;
-  like.classList.toggle("card__like-button_is-active");
-};
-
 // Обработчик «отправки» формы
-const handleFormSubmit = (event) => {
+const onEditProfileFormSubmit = (event) => {
   event.preventDefault();
 
   // Получаем значения полей jobInput и nameInput из свойства value
@@ -70,7 +60,7 @@ const handleFormSubmit = (event) => {
   closeModal(popupEditProfile);
 };
 
-const handleFormCreateSubmit = (event) => {
+const onCreateCardFormSubmit = (event) => {
   event.preventDefault();
 
   // Получаем значения полей cardNameInput и cardUrlInput из свойства value
@@ -78,15 +68,16 @@ const handleFormCreateSubmit = (event) => {
   cardInfo.name = cardNameInput.value;
   cardInfo.link = cardUrlInput.value;
 
-  const newCard = createCard(cardInfo, deleteCard, openImage, clickLike);
+  const newCard = createCard(cardInfo, onDeleteCard, onOpenPreview, onLikeCard);
   placesList.prepend(newCard);
 
   closeModal(popupNewCard);
+  formCreateCard.reset();
 };
 
 // Вывести карточки на страницу
 initialCards.forEach((item) => {
-  let newCard = createCard(item, deleteCard, openImage, clickLike);
+  let newCard = createCard(item, onDeleteCard, onOpenPreview, onLikeCard);
   placesList.append(newCard);
 });
 
@@ -96,9 +87,6 @@ createEventListeners(popupNewCard);
 createEventListeners(popupImage);
 
 buttonAddCard.addEventListener("click", () => {
-  cardNameInput.value = "";
-  cardUrlInput.value = "";
-
   openModal(popupNewCard);
 });
 
@@ -113,5 +101,5 @@ buttonEditProfile.addEventListener("click", () => {
   openModal(popupEditProfile);
 });
 
-formEditProfile.addEventListener("submit", handleFormSubmit);
-formCreateCard.addEventListener("submit", handleFormCreateSubmit);
+formEditProfile.addEventListener("submit", onEditProfileFormSubmit);
+formCreateCard.addEventListener("submit", onCreateCardFormSubmit);

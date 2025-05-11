@@ -1,5 +1,5 @@
 // @todo: Функция создания карточки
-const createCard = (cardInfo, funcDelete, openImage, clickLike) => {
+const createCard = (cardInfo, onDeleteCard, onOpenPreview, onLikeCard) => {
   // @todo: Темплейт карточки
   const cardTemplate = document.querySelector("#card-template").content;
   const cardElement = cardTemplate.querySelector(".card").cloneNode(true);
@@ -15,16 +15,22 @@ const createCard = (cardInfo, funcDelete, openImage, clickLike) => {
 
   //обработчик на кнопку удаления
   deleteButton.addEventListener("click", (event) => {
-    funcDelete(event.target.closest(".places__item"));
+    onDeleteCard(event.target.closest(".places__item"));
   });
-  cardImage.addEventListener("click", (event) => openImage(event));
-  likeButton.addEventListener("click", (event) => clickLike(event));
+  //cardImage.addEventListener("click", (event) => onOpenPreview(event));
+  cardImage.addEventListener("click", () => onOpenPreview(cardInfo));
+  likeButton.addEventListener("click", (event) => onLikeCard(event));
   return cardElement;
 };
 
 // @todo: Функция удаления карточки
-const deleteCard = (cardItem) => {
+const onDeleteCard = (cardItem) => {
   cardItem.remove();
 };
 
-export { createCard, deleteCard };
+const onLikeCard = (event) => {
+  const like = event.target;
+  like.classList.toggle("card__like-button_is-active");
+};
+
+export { createCard, onDeleteCard, onLikeCard };
