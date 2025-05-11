@@ -1,4 +1,4 @@
-import "./index.css";
+import "./pages/index.css";
 import { initialCards } from "./components/cards.js";
 import { createCard, deleteCard } from "./components/card.js";
 import {
@@ -21,18 +21,14 @@ const popupEditProfile = document.querySelector(".popup_type_edit");
 const popupImage = document.querySelector(".popup_type_image");
 
 //DOM узлы для редактирования профиля
-const formEditProfile = popupEditProfile.querySelector(".popup__form");
-const nameInput = formEditProfile.querySelector(".popup__input_type_name");
-const jobInput = formEditProfile.querySelector(
-  ".popup__input_type_description"
-);
+const formEditProfile = document.forms["edit-profile"];
+const nameInput = formEditProfile.elements.name;
+const jobInput = formEditProfile.elements.description;
 
 //DOM узлы для добавления карточки
-const formCreateCard = popupNewCard.querySelector(".popup__form");
-const cardNameInput = formCreateCard.querySelector(
-  ".popup__input_type_card-name"
-);
-const cardUrlInput = formCreateCard.querySelector(".popup__input_type_url");
+const formCreateCard = document.forms["new-place"];
+const cardNameInput = formCreateCard.elements["place-name"];
+const cardUrlInput = formCreateCard.elements.link;
 
 //DOM узлы для отображения картинки в попап
 const imageInPopupImage = popupImage.querySelector(".popup__image");
