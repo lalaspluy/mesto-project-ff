@@ -84,7 +84,7 @@ const onCreateCardFormSubmit = (event) => {
 
   closeModal(popupNewCard);
 
-  clearValidation(formCreateCard, validationConfig);
+  //clearValidation(formCreateCard, validationConfig);
 };
 
 // Вывести карточки на страницу
@@ -122,10 +122,5 @@ formEditProfile.addEventListener("submit", onEditProfileFormSubmit);
 formCreateCard.addEventListener("submit", onCreateCardFormSubmit);
 
 // включение валидации вызовом enableValidation
-// все настройки передаются при вызове
-
+// параметром передаются настройки валидации
 enableValidation(validationConfig);
-
-// очистка ошибок валидации вызовом clearValidation
-
-//clearValidation(profileForm, validationConfig);

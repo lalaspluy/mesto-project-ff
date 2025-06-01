@@ -32,8 +32,6 @@ const hideInputError = (formElement, inputElement, validationConfig) => {
 };
 
 const setEventListeners = (formElement, validationConfig) => {
-  // Находим все поля внутри формы,
-  // сделаем из них массив методом Array.from
   const inputList = Array.from(formElement.querySelectorAll(validationConfig.inputSelector));
   const buttonElement = formElement.querySelector(validationConfig.submitButtonSelector);
   console.log(inputList);
@@ -43,7 +41,6 @@ const setEventListeners = (formElement, validationConfig) => {
   inputList.forEach((inputElement) => {
     // каждому полю добавим обработчик события input
     inputElement.addEventListener('input', () => {
-      // Внутри колбэка вызываем isValid
       isValid(formElement, inputElement, validationConfig);
       toggleButtonState(inputList, buttonElement, validationConfig);
     });
@@ -86,8 +83,9 @@ const toggleButtonState = (inputList, buttonElement, validationConfig) => {
 };
 
 export const clearValidation = (formElement, validationConfig) => {
-  // Находим все поля ввода в форме
+
   const inputList = Array.from(formElement.querySelectorAll(validationConfig.inputSelector));
+  const buttonElement = formElement.querySelector(validationConfig.submitButtonSelector);
 
   // Сбрасываем кастомные сообщения об ошибках
   inputList.forEach(input => input.setCustomValidity(""));
@@ -96,4 +94,7 @@ export const clearValidation = (formElement, validationConfig) => {
   inputList.forEach(input => {
     hideInputError(formElement, input, validationConfig);
   });
+
+  buttonElement.disabled = true;
+  buttonElement.classList.add(validationConfig.inactiveButtonClass);
 };
