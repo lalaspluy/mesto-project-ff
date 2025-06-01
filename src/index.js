@@ -6,6 +6,7 @@ import {
   closeModal,
   createEventListeners,
 } from "./components/modal.js";
+import { enableValidation, clearValidation} from "./components/validation.js";
 
 // DOM узлы, карточки
 const places = document.querySelector(".places");
@@ -32,6 +33,16 @@ const cardUrlInput = formCreateCard.elements.link;
 
 //DOM узел для отображения картинки в попап
 const imageInPopupImage = popupImage.querySelector(".popup__image");
+
+//Объект для валидаций
+const validationConfig = {
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'popup__button_disabled',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__error_visible'
+};
 
 //функция заполнения попапа картинки данными
 const onOpenPreview = (cardInfo) => {
@@ -72,7 +83,8 @@ const onCreateCardFormSubmit = (event) => {
   placesList.prepend(newCard);
 
   closeModal(popupNewCard);
-  formCreateCard.reset();
+
+  clearValidation(formCreateCard, validationConfig);
 };
 
 // Вывести карточки на страницу
@@ -87,6 +99,9 @@ createEventListeners(popupNewCard);
 createEventListeners(popupImage);
 
 buttonAddCard.addEventListener("click", () => {
+  formCreateCard.reset();
+  clearValidation(formCreateCard, validationConfig);
+
   openModal(popupNewCard);
 });
 
@@ -97,9 +112,20 @@ buttonEditProfile.addEventListener("click", () => {
 
   nameInput.value = profileTitleElement.textContent;
   jobInput.value = profileJobElement.textContent;
+  
+  clearValidation(formEditProfile, validationConfig);
 
   openModal(popupEditProfile);
 });
 
 formEditProfile.addEventListener("submit", onEditProfileFormSubmit);
 formCreateCard.addEventListener("submit", onCreateCardFormSubmit);
+
+// включение валидации вызовом enableValidation
+// все настройки передаются при вызове
+
+enableValidation(validationConfig);
+
+// очистка ошибок валидации вызовом clearValidation
+
+//clearValidation(profileForm, validationConfig);
