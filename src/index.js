@@ -34,7 +34,7 @@ const cardUrlInput = formCreateCard.elements.link;
 //DOM узел для отображения картинки в попап
 const imageInPopupImage = popupImage.querySelector(".popup__image");
 
-//Объект для валидаций
+// Объект для валидации
 const validationConfig = {
   formSelector: '.popup__form',
   inputSelector: '.popup__input',
@@ -44,7 +44,7 @@ const validationConfig = {
   errorClass: 'popup__error_visible'
 };
 
-//функция заполнения попапа картинки данными
+// функция заполнения попапа картинки данными
 const onOpenPreview = (cardInfo) => {
   imageInPopupImage.src = cardInfo.link;
   imageInPopupImage.alt = cardInfo.name;
@@ -93,7 +93,7 @@ initialCards.forEach((item) => {
   placesList.append(newCard);
 });
 
-//Вешаем слушателей на попапы
+// Вешаем слушателей на попапы
 createEventListeners(popupEditProfile);
 createEventListeners(popupNewCard);
 createEventListeners(popupImage);
@@ -121,6 +121,6 @@ buttonEditProfile.addEventListener("click", () => {
 formEditProfile.addEventListener("submit", onEditProfileFormSubmit);
 formCreateCard.addEventListener("submit", onCreateCardFormSubmit);
 
-// включение валидации вызовом enableValidation
-// параметром передаются настройки валидации
+// включение валидации
+// параметром передаем настройки валидации
 enableValidation(validationConfig);
