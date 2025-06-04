@@ -7,6 +7,7 @@ import {
   createEventListeners,
 } from "./components/modal.js";
 import { enableValidation, clearValidation} from "./components/validation.js";
+import { getInitialCards, getProfile } from "./components/api.js";
 
 // DOM узлы, карточки
 const places = document.querySelector(".places");
@@ -44,6 +45,7 @@ const validationConfig = {
   errorClass: 'popup__error_visible'
 };
 
+const promises = [getInitialCards(), getProfile()];
 // функция заполнения попапа картинки данными
 const onOpenPreview = (cardInfo) => {
   imageInPopupImage.src = cardInfo.link;
@@ -83,15 +85,46 @@ const onCreateCardFormSubmit = (event) => {
   placesList.prepend(newCard);
 
   closeModal(popupNewCard);
-
-  //clearValidation(formCreateCard, validationConfig);
 };
 
 // Вывести карточки на страницу
-initialCards.forEach((item) => {
+/*initialCards.forEach((item) => {
   let newCard = createCard(item, onDeleteCard, onOpenPreview, onLikeCard);
   placesList.append(newCard);
-});
+});*/
+getInitialCards()
+  .then((result) => {
+    result.forEach((item) => {
+      let newCard = createCard(item, onDeleteCard, onOpenPreview, onLikeCard);
+      placesList.append(newCard);
+    });
+  })
+  .catch((err) => {
+    console.log(err); // выводим ошибку в консоль
+  }); 
+
+getProfile()
+.then((result) => {
+  console.log(result.name);
+})
+.catch((err) => {
+  console.log(err); // выводим ошибку в консоль
+});  
+
+Promise.all(promises)
+  .then((results) => {
+    results[0].forEach((item) => {
+      let newCard = createCard(item, onDeleteCard, onOpenPreview, onLikeCard);
+      placesList.append(newCard);
+    });
+
+    document.querySelector(".profile__title").textContent = results[1].name;
+    document.querySelector(".profile__description").textContent = results[1].about;
+    document.querySelector(".profile__image").style.backgroundImage = `url('${results[1].avatar}')`;
+  })
+  .catch((err) => {
+    console.log(err); // выводим ошибку в консоль
+  }); 
 
 // Вешаем слушателей на попапы
 createEventListeners(popupEditProfile);
