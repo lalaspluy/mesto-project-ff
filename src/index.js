@@ -1,5 +1,4 @@
 import "./pages/index.css";
-import { initialCards } from "./components/cards.js";
 import { createCard, onDeleteCard, onLikeCard } from "./components/card.js";
 import {
   openModal,
@@ -7,11 +6,14 @@ import {
   createEventListeners,
 } from "./components/modal.js";
 import { enableValidation, clearValidation} from "./components/validation.js";
-import { getInitialCards, getProfile } from "./components/api.js";
+import { getCards, getProfile, postCard, editProfile } from "./components/api.js";
 
-// DOM узлы, карточки
+// DOM узлы карточек, профиля
 const places = document.querySelector(".places");
 const placesList = places.querySelector(".places__list");
+const profileName = document.querySelector(".profile__title");
+const profileAbout = document.querySelector(".profile__description");
+const profileImage = document.querySelector(".profile__image");
 
 //DOM узлы кнопки открытия
 const buttonAddCard = document.querySelector(".profile__add-button");
@@ -45,7 +47,7 @@ const validationConfig = {
   errorClass: 'popup__error_visible'
 };
 
-const promises = [getInitialCards(), getProfile()];
+const promises = [getCards(), getProfile()];
 // функция заполнения попапа картинки данными
 const onOpenPreview = (cardInfo) => {
   imageInPopupImage.src = cardInfo.link;
@@ -63,12 +65,22 @@ const onEditProfileFormSubmit = (event) => {
   const jobValue = jobInput.value;
 
   // Выбираем элементы, куда должны быть вставлены значения полей
-  const profileTitleElement = document.querySelector(".profile__title");
-  const profileJobElement = document.querySelector(".profile__description");
+  //const profileTitleElement = profileName;
+  //const profileJobElement = profileAbout;
 
-  // Вставляем новые значения
-  profileTitleElement.textContent = nameValue;
-  profileJobElement.textContent = jobValue;
+  let profileInfo = {};
+  profileInfo.name = nameValue;
+  profileInfo.about = jobValue;
+
+  editProfile(profileInfo)
+  .then(() => {
+    // При успешном запросе вставляем новые значения в поле
+    profileName.textContent = nameValue;
+    profileAbout.textContent = jobValue;
+  })
+  .catch((err) => {
+    console.log(err); 
+  });
 
   closeModal(popupEditProfile);
 };
@@ -80,47 +92,49 @@ const onCreateCardFormSubmit = (event) => {
   let cardInfo = {};
   cardInfo.name = cardNameInput.value;
   cardInfo.link = cardUrlInput.value;
-
-  const newCard = createCard(cardInfo, onDeleteCard, onOpenPreview, onLikeCard);
-  placesList.prepend(newCard);
-
-  closeModal(popupNewCard);
-};
-
-// Вывести карточки на страницу
-/*initialCards.forEach((item) => {
-  let newCard = createCard(item, onDeleteCard, onOpenPreview, onLikeCard);
-  placesList.append(newCard);
-});*/
-getInitialCards()
-  .then((result) => {
-    result.forEach((item) => {
-      let newCard = createCard(item, onDeleteCard, onOpenPreview, onLikeCard);
-      placesList.append(newCard);
-    });
+  
+  postCard(cardInfo)
+  .then(() => {
+    const isMine = true;
+    const isLiked = false;
+    const newCard = createCard(cardInfo, onDeleteCard, onOpenPreview, onLikeCard, isMine, isLiked);
+    placesList.prepend(newCard);
   })
   .catch((err) => {
-    console.log(err); // выводим ошибку в консоль
-  }); 
+    console.log(err); 
+  });
 
-getProfile()
-.then((result) => {
-  console.log(result.name);
-})
-.catch((err) => {
-  console.log(err); // выводим ошибку в консоль
-});  
+  //const newCard = createCard(cardInfo, onDeleteCard, onOpenPreview, onLikeCard);
+  //placesList.prepend(newCard);
+
+  closeModal(popupNewCard);
+}; 
 
 Promise.all(promises)
   .then((results) => {
+    //выводим карточки
     results[0].forEach((item) => {
-      let newCard = createCard(item, onDeleteCard, onOpenPreview, onLikeCard);
+      let isMine = false;
+      let isLiked = false;
+      if (item.owner._id === results[1]._id) {
+        isMine = true;
+      }
+      console.log(isMine);
+      //количество лайков карточки равно длине массива likes
+      let numberLikes = item.likes.length;
+      //проверяем, ставили ли мы лайк данной карточке
+      if (numberLikes > 0) {
+        isLiked = item.likes.some(obj => obj[_id] === results[1]._id);
+        console.log(isLiked);
+      }
+      let newCard = createCard(item, onDeleteCard, onOpenPreview, onLikeCard, isMine, numberLikes, isLiked);
       placesList.append(newCard);
     });
-
-    document.querySelector(".profile__title").textContent = results[1].name;
-    document.querySelector(".profile__description").textContent = results[1].about;
-    document.querySelector(".profile__image").style.backgroundImage = `url('${results[1].avatar}')`;
+    
+    //заполняем значениями с сервера профиль пользователя
+    profileName.textContent = results[1].name;
+    profileAbout.textContent = results[1].about;
+    profileImage.style.backgroundImage = `url('${results[1].avatar}')`;
   })
   .catch((err) => {
     console.log(err); // выводим ошибку в консоль
@@ -140,11 +154,11 @@ buttonAddCard.addEventListener("click", () => {
 
 buttonEditProfile.addEventListener("click", () => {
   // Выбираем элементы, откуда возьмем значения полей
-  const profileTitleElement = document.querySelector(".profile__title");
-  const profileJobElement = document.querySelector(".profile__description");
+  //const profileTitleElement = document.querySelector(".profile__title");
+  //const profileJobElement = document.querySelector(".profile__description");
 
-  nameInput.value = profileTitleElement.textContent;
-  jobInput.value = profileJobElement.textContent;
+  nameInput.value = profileName.textContent;
+  jobInput.value = profileAbout.textContent;
   
   clearValidation(formEditProfile, validationConfig);
 
