@@ -6,30 +6,26 @@ const config = {
   }
 }
 
+const checkResponse = (res) => {
+  if (res.ok) {
+    return res.json();
+  }
+  // если ошибка, отклоняем промис
+  return Promise.reject(`Ошибка: ${res.status}`);
+};
+
 export const getCards = () => {
   return fetch(`${config.baseUrl}/cards`, {
     headers: config.headers
   })
-    .then(res => {
-      if (res.ok) {
-        return res.json();
-      }
-      // если ошибка, отклоняем промис
-      return Promise.reject(`Ошибка: ${res.status}`);
-    });
+    .then(checkResponse);
 }
 
 export const getProfile = () => {
   return fetch(`${config.baseUrl}/users/me`, {
     headers: config.headers
   })
-    .then(res => {
-      if (res.ok) {
-        return res.json();
-      }
-      // если ошибка, отклоняем промис
-      return Promise.reject(`Ошибка: ${res.status}`);
-    });
+    .then(checkResponse);
 }
 
 export const postCard = (cardData) => {
@@ -38,13 +34,15 @@ export const postCard = (cardData) => {
     headers: config.headers,
     body: JSON.stringify(cardData)
   })
-    .then(res => {
-      if (res.ok) {
-        return res.json();
-      }
-      // если ошибка, отклоняем промис
-      return Promise.reject(`Ошибка: ${res.status}`);
-    });
+    .then(checkResponse);
+}
+
+export const deleteCardApi = (cardId) => {
+  return fetch(`${config.baseUrl}/cards/${cardId}`, {
+    method: "DELETE",
+    headers: config.headers
+  })
+    .then(checkResponse);
 }
 
 export const editProfile = (profileData) => {
@@ -53,11 +51,21 @@ export const editProfile = (profileData) => {
     headers: config.headers,
     body: JSON.stringify(profileData)
   })
-    .then(res => {
-      if (res.ok) {
-        return res.json();
-      }
-      // если ошибка, отклоняем промис
-      return Promise.reject(`Ошибка: ${res.status}`);
-    });
+    .then(checkResponse);
+}
+
+export const likeCardApi = (cardId) => {
+  return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
+    method: "PUT",
+    headers: config.headers
+  })
+    .then(checkResponse);
+}
+
+export const unlikeCardApi = (cardId) => {
+  return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
+    method: "DELETE",
+    headers: config.headers
+  })
+    .then(checkResponse);
 }
