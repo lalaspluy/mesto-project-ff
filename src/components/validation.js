@@ -7,15 +7,27 @@ const isValid = (formElement, inputElement, validationConfig) => {
   }
 
   if (!inputElement.validity.valid) {
-    showInputError(formElement, inputElement, inputElement.validationMessage, validationConfig);
+    showInputError(
+      formElement,
+      inputElement,
+      inputElement.validationMessage,
+      validationConfig
+    );
   } else {
     hideInputError(formElement, inputElement, validationConfig);
   }
 };
 
-const showInputError = (formElement, inputElement, errorMessage, validationConfig) => {
+const showInputError = (
+  formElement,
+  inputElement,
+  errorMessage,
+  validationConfig
+) => {
   // Находим элемент ошибки
-  const errorElement = formElement.querySelector(`.${inputElement.name}-input-error`);
+  const errorElement = formElement.querySelector(
+    `.${inputElement.name}-input-error`
+  );
   // Отображаем сообщение об ошибке
   inputElement.classList.add(validationConfig.inputErrorClass);
   errorElement.textContent = errorMessage;
@@ -24,23 +36,28 @@ const showInputError = (formElement, inputElement, errorMessage, validationConfi
 
 const hideInputError = (formElement, inputElement, validationConfig) => {
   // Находим элемент ошибки
-  const errorElement = formElement.querySelector(`.${inputElement.name}-input-error`);
+  const errorElement = formElement.querySelector(
+    `.${inputElement.name}-input-error`
+  );
   // Скрываем сообщение об ошибке
   inputElement.classList.remove(validationConfig.inputErrorClass);
   errorElement.classList.remove(validationConfig.errorClass);
-  errorElement.textContent = '';
+  errorElement.textContent = "";
 };
 
 const setEventListeners = (formElement, validationConfig) => {
-  const inputList = Array.from(formElement.querySelectorAll(validationConfig.inputSelector));
-  const buttonElement = formElement.querySelector(validationConfig.submitButtonSelector);
-  console.log(inputList);
+  const inputList = Array.from(
+    formElement.querySelectorAll(validationConfig.inputSelector)
+  );
+  const buttonElement = formElement.querySelector(
+    validationConfig.submitButtonSelector
+  );
   toggleButtonState(inputList, buttonElement, validationConfig);
 
   // Обойдём все элементы полученной коллекции
   inputList.forEach((inputElement) => {
     // каждому полю добавим обработчик события input
-    inputElement.addEventListener('input', () => {
+    inputElement.addEventListener("input", () => {
       isValid(formElement, inputElement, validationConfig);
       toggleButtonState(inputList, buttonElement, validationConfig);
     });
@@ -49,7 +66,9 @@ const setEventListeners = (formElement, validationConfig) => {
 
 export const enableValidation = (validationConfig) => {
   // Найдём все формы с классом validationConfig.formSelector
-  const formList = Array.from(document.querySelectorAll(validationConfig.formSelector));
+  const formList = Array.from(
+    document.querySelectorAll(validationConfig.formSelector)
+  );
 
   // Переберём полученную коллекцию
   formList.forEach((formElement) => {
@@ -66,7 +85,7 @@ const hasInvalidInput = (inputList) => {
     // Обход массива прекратится и вся функция
     // hasInvalidInput вернёт true
     return !inputElement.validity.valid;
-  })
+  });
 };
 
 const toggleButtonState = (inputList, buttonElement, validationConfig) => {
@@ -83,15 +102,18 @@ const toggleButtonState = (inputList, buttonElement, validationConfig) => {
 };
 
 export const clearValidation = (formElement, validationConfig) => {
-
-  const inputList = Array.from(formElement.querySelectorAll(validationConfig.inputSelector));
-  const buttonElement = formElement.querySelector(validationConfig.submitButtonSelector);
+  const inputList = Array.from(
+    formElement.querySelectorAll(validationConfig.inputSelector)
+  );
+  const buttonElement = formElement.querySelector(
+    validationConfig.submitButtonSelector
+  );
 
   // Сбрасываем кастомные сообщения об ошибках
-  inputList.forEach(input => input.setCustomValidity(""));
+  inputList.forEach((input) => input.setCustomValidity(""));
 
   // Скрываем стандартные сообщения об ошибках
-  inputList.forEach(input => {
+  inputList.forEach((input) => {
     hideInputError(formElement, input, validationConfig);
   });
 

@@ -17,33 +17,20 @@ const createCard = (cardInfo, onDeleteCard, onOpenPreview, onLikeCard) => {
   cardElement.dataset.cardId = cardInfo._id;
 
   if (cardInfo.isMine) {
-    //обработчик на кнопку удаления
     deleteButton.addEventListener("click", (event) => {
-      //onDeleteCard(event.target.closest(".places__item"));
       onDeleteCard(cardElement);
-    })
+    });
   } else {
     deleteButton.style.display = "none";
-  };
-  
+  }
+
   if (cardInfo.isLiked) {
     likeButton.classList.add("card__like-button_is-active");
-  };
-  
+  }
+
   cardImage.addEventListener("click", () => onOpenPreview(cardInfo));
   likeButton.addEventListener("click", (event) => onLikeCard(event));
   return cardElement;
 };
 
-// @todo: Функция удаления карточки
-//const onDeleteCard = (cardItem) => {
-//  cardItem.remove();
-//};
-
-/*const onLikeCard = (event) => {
-  const like = event.target;
-  like.classList.toggle("card__like-button_is-active");
-  
-};*/
-
-export { createCard};
+export { createCard };
