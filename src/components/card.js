@@ -17,8 +17,8 @@ const createCard = (cardInfo, onDeleteCard, onOpenPreview, onLikeCard) => {
   cardElement.dataset.cardId = cardInfo._id;
 
   if (cardInfo.isMine) {
-    deleteButton.addEventListener("click", (event) => {
-      onDeleteCard(cardElement);
+    deleteButton.addEventListener("click", () => {
+      onDeleteCard(cardElement, cardInfo._id);
     });
   } else {
     deleteButton.style.display = "none";

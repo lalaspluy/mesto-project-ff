@@ -45,8 +45,9 @@ const cardNameInput = formCreateCard.elements["place-name"];
 const cardUrlInput = formCreateCard.elements.link;
 const submitCreateCard = formCreateCard.querySelector(".popup__button");
 
-//DOM узел для отображения картинки в попап
+//DOM узлы для превью картинки
 const imageInPopupImage = popupImage.querySelector(".popup__image");
+const captionPopupImage = popupImage.querySelector(".popup__caption");
 
 //DOM узлы для редактирования аватара
 const popupAvatar = document.querySelector(".popup_type_edit-avatar");
@@ -71,12 +72,11 @@ const promises = [getCards(), getProfile()];
 const onOpenPreview = (cardInfo) => {
   imageInPopupImage.src = cardInfo.link;
   imageInPopupImage.alt = cardInfo.name;
-  popupImage.querySelector(".popup__caption").textContent = cardInfo.name;
+  captionPopupImage.textContent = cardInfo.name;
   openModal(popupImage);
 };
 
-function handleDeleteCard(cardElement) {
-  const cardId = cardElement.dataset.cardId;
+function handleDeleteCard(cardElement, cardId) {
 
   deleteCardApi(cardId)
     .then(() => {
@@ -131,7 +131,7 @@ const onEditProfileFormSubmit = (event) => {
   event.preventDefault();
 
   // Получаем значения полей jobInput и nameInput из свойства value
-  let profileInfo = {
+  const profileInfo = {
     name: nameInput.value,
     about: jobInput.value,
   };
@@ -159,7 +159,7 @@ const onCreateCardFormSubmit = (event) => {
   event.preventDefault();
 
   // Получаем значения полей cardNameInput и cardUrlInput из свойства value
-  let cardInfo = {
+  const cardInfo = {
     name: cardNameInput.value,
     link: cardUrlInput.value,
   };
@@ -235,7 +235,7 @@ Promise.all(promises)
         item.isLiked = false;
       }
 
-      let newCard = createCard(
+      const newCard = createCard(
         item,
         handleDeleteCard,
         onOpenPreview,
@@ -248,45 +248,45 @@ Promise.all(promises)
     profileName.textContent = userData.name;
     profileAbout.textContent = userData.about;
     profileImage.style.backgroundImage = `url('${userData.avatar}')`;
-
-    // Вешаем слушателей на попапы
-    createEventListeners(popupEditProfile);
-    createEventListeners(popupNewCard);
-    createEventListeners(popupImage);
-    createEventListeners(popupAvatar);
-
-    buttonAddCard.addEventListener("click", () => {
-      formCreateCard.reset();
-      clearValidation(formCreateCard, validationConfig);
-
-      openModal(popupNewCard);
-    });
-
-    buttonEditProfile.addEventListener("click", () => {
-      nameInput.value = profileName.textContent;
-      jobInput.value = profileAbout.textContent;
-
-      clearValidation(formEditProfile, validationConfig);
-
-      openModal(popupEditProfile);
-    });
-
-    profileImage.addEventListener("click", () => {
-      // Очищаем форму и сбрасываем ошибки валидации
-      formEditAvatar.reset();
-      clearValidation(formEditAvatar, validationConfig);
-
-      // Открываем попап
-      openModal(popupAvatar);
-    });
-
-    formEditProfile.addEventListener("submit", onEditProfileFormSubmit);
-    formCreateCard.addEventListener("submit", onCreateCardFormSubmit);
-    formEditAvatar.addEventListener("submit", onEditAvatarFormSubmit);
-    // включение валидации
-    // параметром передаем настройки валидации
-    enableValidation(validationConfig);
   })
   .catch((err) => {
     console.log(err); // выводим ошибку в консоль, если хотя бы один из промисов с ошибкой
-  });
+});
+
+// Вешаем слушателей на попапы
+createEventListeners(popupEditProfile);
+createEventListeners(popupNewCard);
+createEventListeners(popupImage);
+createEventListeners(popupAvatar);
+
+buttonAddCard.addEventListener("click", () => {
+  formCreateCard.reset();
+  clearValidation(formCreateCard, validationConfig);
+
+  openModal(popupNewCard);
+});
+
+buttonEditProfile.addEventListener("click", () => {
+  nameInput.value = profileName.textContent;
+  jobInput.value = profileAbout.textContent;
+
+  clearValidation(formEditProfile, validationConfig);
+
+  openModal(popupEditProfile);
+});
+
+profileImage.addEventListener("click", () => {
+  // Очищаем форму и сбрасываем ошибки валидации
+  formEditAvatar.reset();
+  clearValidation(formEditAvatar, validationConfig);
+
+  // Открываем попап
+  openModal(popupAvatar);
+});
+
+formEditProfile.addEventListener("submit", onEditProfileFormSubmit);
+formCreateCard.addEventListener("submit", onCreateCardFormSubmit);
+formEditAvatar.addEventListener("submit", onEditAvatarFormSubmit);
+// включение валидации
+// параметром передаем настройки валидации
+enableValidation(validationConfig);
